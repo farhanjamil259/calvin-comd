@@ -1,54 +1,54 @@
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { CartService, ItemService } from "./core/services/services";
-import { ItemSchema, Item, Cart } from "./core/types";
+import "react-native-gesture-handler";
 
-export default function App() {
-  useEffect(() => {
-    const test = async () => {
-      try {
-        // const cart = new Cart();
-        // cart.client = "Ahsan Tariq";
-        // cart.description = "Lorem ipsum";
-        // cart.init(
-        //   {
-        //     rhodium: 10,
-        //     palldium: 12,
-        //     platinum: 13,
-        //   },
-        //   0.2
-        // );
-        // const c = await CartService.instance.post(cart);
-        // console.log("--------");
-        // // (await CartService.instance.get())[0];
-        // c.client = "John";
-        // const i = new Item();
-        // i.name = "Silcencer";
-        // i.category = "Greater";
-        // c.addItem(i);
-        // const r = await CartService.instance.update("dQo5UvR80TiweErzPQGF", c);
-      } catch (e) {
-        console.error(e);
-      }
-    };
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 
-    test();
-  }, []);
+import { NativeBaseProvider, extendTheme, View } from "native-base";
 
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import Main from "./src/Main";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#6366f1",
+  },
+};
+
+const nbtheme = extendTheme({
+  colors: {
+    // Add new color
+    primary: {
+      50: "#f8fafc",
+      100: "#f1f5f9",
+      200: "#e2e8f0",
+      300: "#cbd5e1",
+      400: "#94a3b8",
+      500: "#64748b",
+      600: "#475569",
+      700: "#334155",
+      800: "#1e293b",
+      900: "#0f172a",
+    },
+
+    // Redefining only one shade, rest of the color will remain same.
+    amber: {
+      400: "#d97706",
+    },
+  },
+  config: {
+    // Changing initialColorMode to 'dark'
+    initialColorMode: "light",
   },
 });
+
+export default function App() {
+  return (
+    <NativeBaseProvider theme={nbtheme}>
+      <View flex={1}>
+        <NavigationContainer theme={navTheme}>
+          <Main />
+        </NavigationContainer>
+      </View>
+    </NativeBaseProvider>
+  );
+}
