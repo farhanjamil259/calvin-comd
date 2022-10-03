@@ -54,7 +54,7 @@ const CategoryItem = (props: CategoryItemProps) => {
 const ManagementScreen = () => {
   const navigation = useNavigation();
 
-  const [showcategoryModal, setShowCategoryModal] = useState(true);
+  const [showcategoryModal, setShowCategoryModal] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({

@@ -8,6 +8,7 @@ import {
 import { Cart, Item, ItemSlice, ItemType } from "../../core/types";
 
 import { useQuery } from "@tanstack/react-query";
+import useData from "../hooks/useData";
 
 const addItem = async () => {
   const item = Item.New(
@@ -24,46 +25,23 @@ const addItem = async () => {
 
   try {
     const res = await ItemService.instance.post(item);
-    console.log(res);
   } catch (err) {
     console.log(err);
   }
 };
 
 const Parts = () => {
-  const [parts, setParts] = useState<Item[]>([]);
-
-  const { data } = useQuery<Item[]>([collections.items]);
-
-  useEffect(() => {
-    const getItems = async () => {
-      const res = await ItemService.instance.get();
-
-      setParts(res);
-
-      const cart = Cart.New("Farhan", 0.1, {
-        rhodium: 10,
-        platinum: 20,
-        palldium: 30,
-      });
-
-      cart.addItem(res[0], ItemSlice.half);
-
-      CartService.instance.post(cart);
-    };
-
-    getItems();
-  }, []);
+  const { parts } = useData();
 
   return (
     <View>
-      {data?.map((p) => {
+      {parts?.map((p) => {
         return <Text key={p.id}>{p.name}</Text>;
       })}
 
       <Button
         onPress={() => {
-          console.log(data);
+          console.log(parts);
         }}
       >
         add item

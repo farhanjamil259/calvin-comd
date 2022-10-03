@@ -3,7 +3,7 @@ import { CartService, ItemService } from "./services/services";
 
 const run = async () => {
   try {
-    const cart = Cart.New("John Doe", 0.1, {
+    const cart = Cart.New("John Doe", "some description", 0.1, {
       platinum: 12,
       rhodium: 10,
       palldium: 13,

@@ -3,17 +3,19 @@ import React from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { collections } from "../../core/services/services";
-import { Item } from "../../core/types";
+import { Cart, Item } from "../../core/types";
+import useData from "../hooks/useData";
 
 const Categories = () => {
-  const { data } = useQuery<Item[]>([[collections.carts]]);
+  const { carts } = useData();
+
   return (
     <View>
       <Text>Categories</Text>
 
       <Button
         onPress={() => {
-          console.log(data);
+          console.log(carts);
         }}
       >
         asd

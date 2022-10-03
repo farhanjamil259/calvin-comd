@@ -5,15 +5,14 @@ import { StyleSheet, View } from "react-native";
 
 import { PRIMARY_COLOR } from "./constants/COLORS";
 
-import CustomDrawerContent from "./components/CustomDrawerContent";
 import AllTickets from "./screens/AllTickets";
 import LoginScreen from "./screens/LoginScreen";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { AddIcon, Button, Icon } from "native-base";
-import ManagementScreen from "./screens/ManagementScreen";
-import { useEffect, useMemo, useState } from "react";
 
-import { useQuery, QueryKey } from "@tanstack/react-query";
+import { AddIcon, Button, Modal, Text } from "native-base";
+import ManagementScreen from "./screens/ManagementScreen";
+import { useMemo, useState } from "react";
+
+import { useQuery } from "@tanstack/react-query";
 import {
   CartService,
   collections,
@@ -21,45 +20,50 @@ import {
 } from "../core/services/services";
 import { Item } from "../core/types";
 import SplashScreen from "./screens/SplashScreen";
-import NetInfo from "@react-native-community/netinfo";
+import CreateTicketModal from "./modals/CreateTicketModal";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 const DrawerNavigation = () => {
+  const [ticketModalOpen, setTicketModalOpen] = useState(true);
+
   return (
-    <Drawer.Navigator
-      initialRouteName="Map"
-      useLegacyImplementation
-      // drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
-      <Drawer.Screen
-        options={{
-          headerRight: () => {
-            return (
-              <Button variant="link" leftIcon={<AddIcon size={2} />}>
-                New Ticket
-              </Button>
-            );
-          },
-        }}
-        name="Tickets"
-        component={AllTickets}
+    <>
+      <Drawer.Navigator initialRouteName="Map" useLegacyImplementation>
+        <Drawer.Screen
+          options={{
+            headerRight: () => {
+              return (
+                <Button
+                  onPress={() => setTicketModalOpen(true)}
+                  variant="link"
+                  leftIcon={<AddIcon size={2} />}
+                >
+                  New Ticket
+                </Button>
+              );
+            },
+          }}
+          name="Tickets"
+          component={AllTickets}
+        />
+
+        <Drawer.Screen name="Management" component={ManagementScreen} />
+      </Drawer.Navigator>
+
+      <CreateTicketModal
+        open={ticketModalOpen}
+        onClose={() => setTicketModalOpen(false)}
       />
-
-      <Drawer.Screen name="Management" component={ManagementScreen} />
-    </Drawer.Navigator>
+    </>
   );
-};
-
-type MainProps = {
-  notificationToken?: string;
 };
 
 export default function Main() {
   const [token, setToken] = useState(true);
 
-  const { isLoading: isItemsLoading } = useQuery<Item[]>(
+  const { data, isLoading: isItemsLoading } = useQuery<Item[]>(
     [collections.items],
     async () => await ItemService.instance.get()
   );
