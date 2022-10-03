@@ -100,3 +100,88 @@ export class CartService {
     return await this.db.collection(collections.carts).doc(id).delete();
   }
 }
+
+const ItemConverter = {
+  toFirestore: (item: Item): firebase.firestore.DocumentData => {
+    const items: any[] = [];
+
+    const doc = {
+      ...item,
+    };
+
+    return doc;
+  },
+  fromFirestore: (
+    snapshot: firebase.firestore.QueryDocumentSnapshot<Item>,
+    options: firebase.firestore.SnapshotOptions
+  ): Item => {
+    const data = snapshot.data();
+    return mapper(data, Item, data.id);
+  },
+};
+
+export class ItemService {
+  private db: firebase.firestore.Firestore;
+
+  private static _instance: ItemService;
+
+  static get instance() {
+    if (!this._instance) {
+      this._instance = new ItemService();
+    }
+    return this._instance;
+  }
+
+  constructor() {
+    this.db = db;
+  }
+
+  async categories() {
+    const data = await this.db
+      .collection(collections.items)
+      .withConverter(ItemConverter)
+      .get();
+
+    const categories = new Set();
+    data.docs.forEach((doc) => {
+      categories.add(doc.data().category);
+    });
+
+    return [...categories];
+  }
+
+  async get() {
+    const data = await this.db
+      .collection(collections.items)
+      .withConverter(ItemConverter)
+      .get();
+
+    const mapped: Item[] = [];
+
+    data.docs.forEach((doc) => {
+      mapped.push(doc.data());
+    });
+
+    return mapped;
+  }
+
+  async post(item: Item) {
+    return await this.db
+      .collection(collections.items)
+      .withConverter(ItemConverter)
+      .doc(item.id)
+      .set(item);
+  }
+
+  async update(id: string, item: Item) {
+    return await this.db
+      .collection(collections.items)
+      .withConverter(ItemConverter)
+      .doc(id)
+      .set(item);
+  }
+
+  async delete(id: string) {
+    return await this.db.collection(collections.items).doc(id).delete();
+  }
+}

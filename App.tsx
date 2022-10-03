@@ -1,93 +1,54 @@
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { CartService } from "./core/services/services";
-import { Cart, Item, ItemSlice, ItemType } from "./core/types";
+import "react-native-gesture-handler";
 
-export default function App() {
-  useEffect(() => {
-    const test = async () => {
-      try {
-        // const cart = Cart.New("John Doe", 0.1, {
-        //   platinum: 12,
-        //   rhodium: 10,
-        //   palldium: 13,
-        // });
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 
-        // cart.addItem(
-        //   Item.New(
-        //     "Abacux 21T",
-        //     "Audi",
-        //     ItemType.converter,
-        //     ["AB-Con"],
-        //     1,
-        //     0,
-        //     0.025,
-        //     0.5,
-        //     0.25
-        //   )
-        // );
-        // cart.addItem(
-        //   Item.New(
-        //     "Gigasole 82L",
-        //     "Mercedes",
-        //     ItemType.converter,
-        //     ["LM-Con", "G582-L"],
-        //     1.5,
-        //     0,
-        //     0.35,
-        //     0.5,
-        //     0.15
-        //   )
-        // );
+import { NativeBaseProvider, extendTheme, View } from "native-base";
 
-        // cart.addItem(
-        //   Item.New(
-        //     "Wire Converter 12V",
-        //     "Audi",
-        //     ItemType.wire,
-        //     ["WC-12A"],
-        //     1,
-        //     12
-        //   )
-        // );
+import Main from "./src/Main";
 
-        // await CartService.instance.post(cart);
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#6366f1",
+  },
+};
 
-        const single = (await CartService.instance.get())[0];
-        single.client = "John Changed";
-        single.materialPrices = {
-          platinum: 8,
-          rhodium: 7,
-          palldium: 6,
-        };
+const nbtheme = extendTheme({
+  colors: {
+    // Add new color
+    primary: {
+      50: "#f8fafc",
+      100: "#f1f5f9",
+      200: "#e2e8f0",
+      300: "#cbd5e1",
+      400: "#94a3b8",
+      500: "#64748b",
+      600: "#475569",
+      700: "#334155",
+      800: "#1e293b",
+      900: "#0f172a",
+    },
 
-        single.items.map((x) => (x.itemSlice = ItemSlice.threeQuarter));
-        await CartService.instance.update(single.id, single);
-        // await CartService.instance.delete(
-        //   "3cf43729-4d29-47e4-a412-15b9c5e52b24"
-        // );
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    test();
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    // Redefining only one shade, rest of the color will remain same.
+    amber: {
+      400: "#d97706",
+    },
+  },
+  config: {
+    // Changing initialColorMode to 'dark'
+    initialColorMode: "light",
   },
 });
+
+export default function App() {
+  return (
+    <NativeBaseProvider theme={nbtheme}>
+      <View flex={1}>
+        <NavigationContainer theme={navTheme}>
+          <Main />
+        </NavigationContainer>
+      </View>
+    </NativeBaseProvider>
+  );
+}

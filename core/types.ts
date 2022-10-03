@@ -1,5 +1,4 @@
 import uuid from "react-native-uuid";
-import { mapper } from "./helpers/mapper";
 
 export enum ItemType {
   wire = "WIRE",
@@ -13,7 +12,7 @@ export enum ItemSlice {
   quarter = 1 / 4,
 }
 
-interface MatetialPrices {
+export interface MaterialPrices {
   platinum: number;
   rhodium: number;
   palldium: number;
@@ -56,10 +55,23 @@ export class Item {
 
     return item;
   }
+
+  addIdentifier(identifier: string) {
+    if (this.indetifiers.indexOf(identifier) === -1) {
+      this.indetifiers.push(identifier);
+    }
+  }
+
+  removeIdentifier(identifier: string) {
+    const index = this.indetifiers.indexOf(identifier, 0);
+    if (index > -1) {
+      this.indetifiers.splice(index, 1);
+    }
+  }
 }
 
 export class CartItem extends Item {
-  materialPrices: MatetialPrices;
+  materialPrices: MaterialPrices;
   itemSlice: ItemSlice = ItemSlice.full;
 
   static New(
@@ -116,13 +128,13 @@ export class Cart {
   client: string = "";
   description: string = "";
   profitMarginPercent: number = 0;
-  materialPrices: MatetialPrices;
+  materialPrices: MaterialPrices;
   items: CartItem[] = [];
 
   static New(
     client: string,
     profitMarginPercent: number,
-    materialPrices: MatetialPrices
+    materialPrices: MaterialPrices
   ): Cart {
     const cart = new Cart();
     cart.id = uuid.v4().toString();
@@ -146,11 +158,19 @@ export class Cart {
     return this.profitMargin + this.bill;
   }
 
+  get quantity() {
+    return this.items.length;
+  }
+
   addItem(item: Item, slice: ItemSlice = ItemSlice.full) {
     const cartItem = item as CartItem;
     cartItem.id = uuid.v4().toString();
     cartItem.materialPrices = this.materialPrices;
     cartItem.itemSlice = slice;
     this.items.push(cartItem);
+  }
+
+  removeItem(id: string) {
+    this.items = this.items.filter((x) => x.id !== id);
   }
 }
