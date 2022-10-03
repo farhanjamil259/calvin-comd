@@ -1,17 +1,22 @@
 import { Box, HStack, Text, VStack } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
+import { Cart } from "../../core/types";
 
-const Ticket = () => {
+type TicketProps = {
+  cart: Cart;
+};
+
+const Ticket = ({ cart }: TicketProps) => {
   return (
     <Box my="2" p="4" backgroundColor="white" borderRadius="lg">
       <HStack justifyContent="space-between">
         <VStack>
-          <Text fontWeight="bold">Daily 4</Text>
-          <Text>123123123123</Text>
-          <Text fontWeight="light">Walter 1350</Text>
+          <Text fontWeight="bold">{cart.name}</Text>
+          <Text>{cart.description}</Text>
+          <Text fontWeight="light">{cart.client}</Text>
         </VStack>
         <VStack>
-          <Text textAlign="right">{new Date().toDateString()}</Text>
+          <Text textAlign="right">{cart.date.toDateString()}</Text>
         </VStack>
       </HStack>
     </Box>

@@ -125,6 +125,8 @@ export class CartItem extends Item {
 
 export class Cart {
   id: string;
+  name: string = "";
+  date: Date = new Date();
   client: string = "";
   description: string = "";
   profitMarginPercent: number = 0;
@@ -133,11 +135,14 @@ export class Cart {
 
   static New(
     client: string,
+    description: string,
     profitMarginPercent: number,
     materialPrices: MaterialPrices
   ): Cart {
     const cart = new Cart();
+    cart.date = new Date();
     cart.id = uuid.v4().toString();
+    cart.description = description;
     cart.client = client;
     cart.profitMarginPercent = profitMarginPercent;
     cart.materialPrices = materialPrices;

@@ -3,12 +3,13 @@ import { CartService, ItemService } from "./services/services";
 
 const run = async () => {
   try {
-    const cart = Cart.New("John Doe", 0.1, {
+    const cart = Cart.New("John Doe", "some description", 0.1, {
       platinum: 12,
       rhodium: 10,
       palldium: 13,
     });
 
+    cart.name = "Daily 4";
     cart.addItem(
       Item.New(
         "Abacux 21T",
@@ -58,7 +59,14 @@ const run = async () => {
     // );
 
     // await ItemService.instance.post(
-    //   Item.New("Wire Converter 12V", "Audi", ItemType.wire, ["WC-12A"], 1, 12)
+    //   Item.New(
+    //     "Wire Converter 12V 2 ",
+    //     "Audi 2",
+    //     ItemType.wire,
+    //     ["WC-12A 2"],
+    //     1,
+    //     12
+    //   )
     // );
 
     // const items = await ItemService.instance.get();

@@ -4,7 +4,14 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 
 import { NativeBaseProvider, extendTheme, View } from "native-base";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import NetInfo from "@react-native-community/netinfo";
+
 import Main from "./src/Main";
+import { useEffect } from "react";
+
+const queryClient = new QueryClient();
 
 const navTheme = {
   ...DefaultTheme,
@@ -42,11 +49,20 @@ const nbtheme = extendTheme({
 });
 
 export default function App() {
+  useEffect(() => {
+    NetInfo.fetch().then((state) => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+    });
+  }, []);
+
   return (
     <NativeBaseProvider theme={nbtheme}>
       <View flex={1}>
         <NavigationContainer theme={navTheme}>
-          <Main />
+          <QueryClientProvider client={queryClient}>
+            <Main />
+          </QueryClientProvider>
         </NavigationContainer>
       </View>
     </NativeBaseProvider>

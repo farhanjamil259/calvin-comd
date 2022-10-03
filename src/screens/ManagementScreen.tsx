@@ -17,6 +17,8 @@ import {
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { axiosPrivate } from "../config/axios";
+import Categories from "./Categories";
+import Parts from "./Parts";
 
 type CategoryItemProps = {
   name: string;
@@ -52,7 +54,7 @@ const CategoryItem = (props: CategoryItemProps) => {
 const ManagementScreen = () => {
   const navigation = useNavigation();
 
-  const [showcategoryModal, setShowCategoryModal] = useState(true);
+  const [showcategoryModal, setShowCategoryModal] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -109,22 +111,8 @@ const ManagementScreen = () => {
         </Button>
       </HStack>
 
-      {selected === "c" && (
-        <ScrollView
-          w="full"
-          refreshControl={
-            <RefreshControl
-              refreshing={true}
-              onRefresh={() => {
-                console.log("Refreshed");
-              }}
-            />
-          }
-          flex={1}
-        >
-          <CategoryItem id={"1"} name={"Category A"} />
-        </ScrollView>
-      )}
+      {selected === "c" && <Categories />}
+      {selected === "p" && <Parts />}
 
       <Modal onClose={handleClose} isOpen={showcategoryModal} size="xs">
         <Modal.Content>
