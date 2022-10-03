@@ -4,7 +4,7 @@ import { db } from "./../firebase.config";
 import { Cart, CartItem, Item, ItemType } from "../types";
 import { mapper } from "../helpers/mapper";
 
-const collections = {
+export const collections = {
   items: "items",
   carts: "carts",
 };

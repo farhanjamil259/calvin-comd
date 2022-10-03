@@ -9,6 +9,7 @@ const run = async () => {
       palldium: 13,
     });
 
+    cart.name = "Daily 4";
     cart.addItem(
       Item.New(
         "Abacux 21T",
@@ -58,7 +59,14 @@ const run = async () => {
     // );
 
     // await ItemService.instance.post(
-    //   Item.New("Wire Converter 12V", "Audi", ItemType.wire, ["WC-12A"], 1, 12)
+    //   Item.New(
+    //     "Wire Converter 12V 2 ",
+    //     "Audi 2",
+    //     ItemType.wire,
+    //     ["WC-12A 2"],
+    //     1,
+    //     12
+    //   )
     // );
 
     // const items = await ItemService.instance.get();

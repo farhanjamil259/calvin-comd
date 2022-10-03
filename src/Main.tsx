@@ -11,7 +11,17 @@ import LoginScreen from "./screens/LoginScreen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { AddIcon, Button, Icon } from "native-base";
 import ManagementScreen from "./screens/ManagementScreen";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { useQuery, QueryKey } from "@tanstack/react-query";
+import {
+  CartService,
+  collections,
+  ItemService,
+} from "../core/services/services";
+import { Item } from "../core/types";
+import SplashScreen from "./screens/SplashScreen";
+import NetInfo from "@react-native-community/netinfo";
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -20,6 +30,7 @@ const DrawerNavigation = () => {
   return (
     <Drawer.Navigator
       initialRouteName="Map"
+      useLegacyImplementation
       // drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen
@@ -46,7 +57,25 @@ type MainProps = {
 };
 
 export default function Main() {
-  const [token, setToken] = useState(false);
+  const [token, setToken] = useState(true);
+
+  const { isLoading: isItemsLoading } = useQuery<Item[]>(
+    [collections.items],
+    async () => await ItemService.instance.get()
+  );
+
+  const { isLoading: isCartLoading } = useQuery(
+    [collections.carts],
+    async () => await CartService.instance.get()
+  );
+
+  const loading = useMemo(() => {
+    return isItemsLoading || isCartLoading;
+  }, [isItemsLoading, isCartLoading]);
+
+  if (loading) {
+    return <SplashScreen />;
+  }
 
   if (!token) {
     return (
