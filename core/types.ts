@@ -1,15 +1,9 @@
-// export enum Unit {
-//   pound = "POUND",
-//   Each = "EA",
-//   kilo = "KG",
-// }
-
-import { TouchableHighlight } from "react-native";
+import uuid from "react-native-uuid";
+import { mapper } from "./helpers/mapper";
 
 export enum ItemType {
   wire = "WIRE",
   converter = "CONVERTER",
-  all = "All",
 }
 
 export enum ItemSlice {
@@ -19,48 +13,82 @@ export enum ItemSlice {
   quarter = 1 / 4,
 }
 
-export interface Metal {
-  id: string;
-  name: string;
-  price: number;
-}
-
 interface MatetialPrices {
   platinum: number;
   rhodium: number;
   palldium: number;
 }
 
-export interface ItemSchema {
-  id: string;
-  name: string;
-  indetifiers: string[];
-  platinumRatio: number;
-  rhodiumRatio: number;
-  palldiumRatio: number;
-  weight: number;
-  price: number;
-  type: ItemType;
-  category: string;
-  itemSlice: ItemSlice;
-}
-
 export class Item {
   id: string;
   name: string = "";
+  type: ItemType = ItemType.converter;
+  category: string = "Audi";
   indetifiers: string[] = [];
+  weight: number = 0;
+  basePrice: number = 0;
   platinumRatio: number = 0;
   rhodiumRatio: number = 0;
   palldiumRatio: number = 0;
-  weight: number = 0;
-  price: number = 0;
-  type: ItemType = ItemType.converter;
-  category: string = "Audi";
 
+  static New(
+    name: string,
+    category: string,
+    type: ItemType = ItemType.converter,
+    identifiers: string[] = [],
+    weight = 0,
+    basePrice = 0,
+    platinumRatio = 0,
+    rhodiumRatio = 0,
+    palldiumRatio = 0
+  ): Item {
+    const item = new Item();
+    item.id = uuid.v4().toString();
+    item.name = name;
+    item.type = type;
+    item.category = category;
+    item.indetifiers = identifiers;
+    item.weight = weight;
+    item.basePrice = basePrice;
+    item.platinumRatio = platinumRatio;
+    item.rhodiumRatio = rhodiumRatio;
+    item.palldiumRatio = palldiumRatio;
+
+    return item;
+  }
+}
+
+export class CartItem extends Item {
   materialPrices: MatetialPrices;
   itemSlice: ItemSlice = ItemSlice.full;
 
-  get amount() {
+  static New(
+    name: string,
+    category: string,
+    type: ItemType = ItemType.converter,
+    identifiers: string[] = [],
+    weight = 0,
+    basePrice = 0,
+    platinumRatio = 0,
+    rhodiumRatio = 0,
+    palldiumRatio = 0
+  ): Item {
+    const item = new Item();
+    item.id = uuid.v4().toString();
+    item.name = name;
+    item.type = type;
+    item.category = category;
+    item.indetifiers = identifiers;
+    item.weight = weight;
+    item.basePrice = basePrice;
+    item.platinumRatio = platinumRatio;
+    item.rhodiumRatio = rhodiumRatio;
+    item.palldiumRatio = palldiumRatio;
+
+    return item;
+  }
+
+  get price() {
     const platinumCost =
       this.weight * this.platinumRatio * this.materialPrices?.platinum;
     const rhodiumCost =
@@ -69,40 +97,44 @@ export class Item {
       this.weight * this.palldiumRatio * this.materialPrices?.palldium;
 
     const materialPrice = platinumCost + rhodiumCost + palldiumCost;
+    let price = this.basePrice;
 
     if (materialPrice) {
-      return materialPrice + this.price;
+      price += materialPrice;
     }
 
-    return this.price;
+    return price;
   }
-}
 
-export interface CartSchema {
-  id: string;
-  client: string;
-  description: string;
-  profitMarginPercent: number;
-  _materialPrices: MatetialPrices;
+  get amount() {
+    return this.price * this.itemSlice;
+  }
 }
 
 export class Cart {
   id: string;
   client: string = "";
   description: string = "";
-
   profitMarginPercent: number = 0;
   materialPrices: MatetialPrices;
-  items: Item[] = [];
+  items: CartItem[] = [];
 
-  constructor(profitMarginPercent: number, materialPrices: MatetialPrices) {
-    this.profitMarginPercent = profitMarginPercent;
-    this.materialPrices = this.materialPrices;
+  static New(
+    client: string,
+    profitMarginPercent: number,
+    materialPrices: MatetialPrices
+  ): Cart {
+    const cart = new Cart();
+    cart.id = uuid.v4().toString();
+    cart.client = client;
+    cart.profitMarginPercent = profitMarginPercent;
+    cart.materialPrices = materialPrices;
+    return cart;
   }
 
   private get bill() {
     let sum = 0;
-    this.items.forEach((x) => (sum += x.amount));
+    this.items.forEach((x) => (sum += x.price));
     return sum;
   }
 
@@ -114,8 +146,11 @@ export class Cart {
     return this.profitMargin + this.bill;
   }
 
-  addItem(item: Item) {
-    item.materialPrices = this.materialPrices;
-    this.items.push(item);
+  addItem(item: Item, slice: ItemSlice = ItemSlice.full) {
+    const cartItem = item as CartItem;
+    cartItem.id = uuid.v4().toString();
+    cartItem.materialPrices = this.materialPrices;
+    cartItem.itemSlice = slice;
+    this.items.push(cartItem);
   }
 }

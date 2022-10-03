@@ -1,13 +1,26 @@
-export function mapper<T>(source: any, destination: new () => T, id: string) {
-  let output = new destination();
+export function mapper<T>(
+  source: any,
+  destination: new () => T,
+  id: string,
+  extension: any = {},
 
-  const propNames = Object.getOwnPropertyNames(output);
+  flat: boolean = false
+) {
+  let output: any = flat ? {} : new destination();
+
+  const propNames = Object.getOwnPropertyNames(
+    flat ? new destination() : output
+  );
 
   propNames.forEach((propName) => {
-    (output as any)[propName] = source[propName];
+    output[propName] = source[propName];
   });
 
-  (output as any)["id"] = id;
+  output["id"] = id;
+
+  Object.getOwnPropertyNames(extension).forEach((propName) => {
+    output[propName] = extension[propName];
+  });
 
   return output as T;
 }
